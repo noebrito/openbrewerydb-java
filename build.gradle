@@ -29,6 +29,16 @@ test {
 }
 
 publishing {
+
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.noebrito'
+            artifactId = 'openbrewerydb-java'
+            version = '1.0'
+            from components.java
+        }
+    }
+
     repositories {
         maven {
             name = "GitHubPackages"
