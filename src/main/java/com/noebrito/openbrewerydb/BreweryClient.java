@@ -77,24 +77,28 @@ public class BreweryClient {
 		FilterType filterType = filter.getFilterType();
 		String filterValue = filter.getFilterValue();
 		String listBreweriesUrl = String.format("%s/breweries?%s=%s", url, filterType.label, filterValue);
+		return executeGetRequest(listBreweriesUrl);
+	}
 
-		List<Brewery> breweries;
+	public List<Brewery> searchBreweries(String query) throws OpenBreweryDbClientException {
+		String searchBreweriesUrl = String.format("%s/breweries/search?query=%s", url, query);
+		return executeGetRequest(searchBreweriesUrl);
+	}
+
+	private List<Brewery> executeGetRequest(String url) throws OpenBreweryDbClientException {
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
 					.GET()
-					.uri(URI.create(listBreweriesUrl))
+					.uri(URI.create(url))
 					.build();
 
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			validateResponse(response);
-			System.out.println(response.body());
 			Type listType = new TypeToken<List<Brewery>>(){}.getType();
-			breweries = gson.fromJson(response.body(), listType);
+			return gson.fromJson(response.body(), listType);
 		} catch (Exception e) {
 			throw new OpenBreweryDbClientException(e);
 		}
-
-		return breweries;
 	}
 
 	private void validateResponse(HttpResponse<String> response) throws OpenBreweryDbClientException {
