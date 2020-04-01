@@ -45,4 +45,14 @@ class ClientTest implements WithAssertions {
 		assertThat(breweries).isNotNull();
 		assertThat(breweries.size()).isGreaterThan(0);
 	}
+
+	@Test
+	void testSearchBreweries() throws OpenBreweryDbClientException {
+		BreweryClient breweryClient = new BreweryClient(ENDPOINT);
+
+		List<Brewery> breweries = breweryClient.searchBreweries("dog");
+
+		assertThat(breweries).isNotNull();
+		assertThat(breweries.size()).isGreaterThan(0);
+	}
 }
