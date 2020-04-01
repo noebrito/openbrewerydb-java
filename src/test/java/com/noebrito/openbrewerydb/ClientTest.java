@@ -12,16 +12,18 @@ class ClientTest implements WithAssertions {
 
 	@Test
 	void testGetBrewery() throws OpenBreweryDbClientException {
-		Client client = new Client(ENDPOINT);
-		Brewery brewery = client.getBrewery(1);
+		BreweryClient breweryClient = new BreweryClient(ENDPOINT);
+		Brewery brewery = breweryClient.getBrewery(1);
+
+		assertThat(brewery).isNotNull();
 		assertThat(brewery.getId()).isEqualTo(1);
 	}
 
 	@Test
 	void testGetBreweryThrowsException() {
-		Client client = new Client("bad");
-		assertThatThrownBy(() -> {client.getBrewery(1); })
+		BreweryClient breweryClient = new BreweryClient("bad");
+		assertThatThrownBy(() -> {
+			breweryClient.getBrewery(1); })
 				.isInstanceOf(OpenBreweryDbClientException.class);
 	}
-
 }

@@ -1,30 +1,47 @@
 package com.noebrito.openbrewerydb;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.noebrito.openbrewerydb.exceptions.OpenBreweryDbClientException;
 import com.noebrito.openbrewerydb.models.Brewery;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class Client {
+/**
+ * Client wrapper for the Open Brewery DB Rest API.
+ */
+public class BreweryClient {
 
 	private HttpClient httpClient;
 	private String url;
 	private Gson gson;
 
-	public Client(String url) {
+	/**
+	 * Constructor
+	 *
+	 * @param url the endpoint url for the service.
+	 */
+	public BreweryClient(String url) {
 		this.url = url;
-		this.gson = new Gson();
+		this.gson = new GsonBuilder()
+				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+				.create();
 		httpClient = HttpClient.newBuilder()
 				.version(HttpClient.Version.HTTP_1_1)
 				.build();
 	}
 
-
+	/**
+	 * Returns the requested brewery.
+	 *
+	 * @param id the id of the brewery being requested.
+	 * @return a {@link Brewery} object.
+	 * @throws OpenBreweryDbClientException when a successful call is not made.
+	 */
 	public Brewery getBrewery(int id) throws OpenBreweryDbClientException {
 		String getBreweryUrl = String.format("%s/breweries/%s", url, id);
 		Brewery brewery;
@@ -44,7 +61,4 @@ public class Client {
 
 		return brewery;
 	}
-
-
-
 }
