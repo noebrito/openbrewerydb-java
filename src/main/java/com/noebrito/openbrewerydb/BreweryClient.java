@@ -3,13 +3,18 @@ package com.noebrito.openbrewerydb;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.noebrito.openbrewerydb.exceptions.OpenBreweryDbClientException;
 import com.noebrito.openbrewerydb.models.Brewery;
+import com.noebrito.openbrewerydb.models.FilterType;
+import com.noebrito.openbrewerydb.models.ListBreweriesFilter;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 /**
  * Client wrapper for the Open Brewery DB Rest API.
@@ -47,18 +52,54 @@ public class BreweryClient {
 		Brewery brewery;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
+					.GET()
 					.uri(URI.create(getBreweryUrl))
 					.build();
 
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-			if (response.statusCode() != 200) {
-				throw new OpenBreweryDbClientException("Bad Request");
-			}
+			validateResponse(response);
 			brewery = gson.fromJson(response.body(), Brewery.class);
 		} catch (Exception e) {
 			throw new OpenBreweryDbClientException(e);
 		}
 
 		return brewery;
+	}
+
+	/**
+	 * Returns a list of breweries based on the provided filter.
+	 *
+	 * @param filter {@link ListBreweriesFilter} for filtering breweries.
+	 * @return a list of Brewery objects.
+	 * @throws OpenBreweryDbClientException if service call fails.
+	 */
+	public List<Brewery> listBreweries(ListBreweriesFilter filter) throws OpenBreweryDbClientException {
+		FilterType filterType = filter.getFilterType();
+		String filterValue = filter.getFilterValue();
+		String listBreweriesUrl = String.format("%s/breweries?%s=%s", url, filterType.label, filterValue);
+
+		List<Brewery> breweries;
+		try {
+			HttpRequest request = HttpRequest.newBuilder()
+					.GET()
+					.uri(URI.create(listBreweriesUrl))
+					.build();
+
+			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+			validateResponse(response);
+			System.out.println(response.body());
+			Type listType = new TypeToken<List<Brewery>>(){}.getType();
+			breweries = gson.fromJson(response.body(), listType);
+		} catch (Exception e) {
+			throw new OpenBreweryDbClientException(e);
+		}
+
+		return breweries;
+	}
+
+	private void validateResponse(HttpResponse<String> response) throws OpenBreweryDbClientException {
+		if (response.statusCode() != 200) {
+			throw new OpenBreweryDbClientException("Received a non 200 status code.");
+		}
 	}
 }

@@ -2,8 +2,12 @@ package com.noebrito.openbrewerydb;
 
 import com.noebrito.openbrewerydb.exceptions.OpenBreweryDbClientException;
 import com.noebrito.openbrewerydb.models.Brewery;
+import com.noebrito.openbrewerydb.models.FilterType;
+import com.noebrito.openbrewerydb.models.ListBreweriesFilter;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 
 class ClientTest implements WithAssertions {
@@ -23,7 +27,22 @@ class ClientTest implements WithAssertions {
 	void testGetBreweryThrowsException() {
 		BreweryClient breweryClient = new BreweryClient("bad");
 		assertThatThrownBy(() -> {
-			breweryClient.getBrewery(1); })
+			breweryClient.getBrewery(1);
+		})
 				.isInstanceOf(OpenBreweryDbClientException.class);
+	}
+
+	@Test
+	void testListBreweries() throws OpenBreweryDbClientException {
+		BreweryClient breweryClient = new BreweryClient(ENDPOINT);
+		ListBreweriesFilter filter = ListBreweriesFilter.builder()
+				.filterType(FilterType.BY_CITY)
+				.filterValue("los_angeles")
+				.build();
+
+		List<Brewery> breweries = breweryClient.listBreweries(filter);
+
+		assertThat(breweries).isNotNull();
+		assertThat(breweries.size()).isGreaterThan(0);
 	}
 }
