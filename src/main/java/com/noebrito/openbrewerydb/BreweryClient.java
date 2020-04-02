@@ -71,21 +71,28 @@ public class BreweryClient {
 	 *
 	 * @param filter {@link ListBreweriesFilter} for filtering breweries.
 	 * @return a list of Brewery objects.
-	 * @throws OpenBreweryDbClientException if service call fails.
+	 * @throws OpenBreweryDbClientException if the service call fails.
 	 */
 	public List<Brewery> listBreweries(ListBreweriesFilter filter) throws OpenBreweryDbClientException {
 		FilterType filterType = filter.getFilterType();
 		String filterValue = filter.getFilterValue();
 		String listBreweriesUrl = String.format("%s/breweries?%s=%s", url, filterType.label, filterValue);
-		return executeGetRequest(listBreweriesUrl);
+		return executeListBreweriesRequest(listBreweriesUrl);
 	}
 
+	/**
+	 * Returns a list of breweries based on the search term provided in the query.
+	 *
+	 * @param query Search term being queried.
+	 * @return a list of Brewery objects.
+	 * @throws OpenBreweryDbClientException if the service call fails.
+	 */
 	public List<Brewery> searchBreweries(String query) throws OpenBreweryDbClientException {
 		String searchBreweriesUrl = String.format("%s/breweries/search?query=%s", url, query);
-		return executeGetRequest(searchBreweriesUrl);
+		return executeListBreweriesRequest(searchBreweriesUrl);
 	}
 
-	private List<Brewery> executeGetRequest(String url) throws OpenBreweryDbClientException {
+	private List<Brewery> executeListBreweriesRequest(String url) throws OpenBreweryDbClientException {
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
 					.GET()
