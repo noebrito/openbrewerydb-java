@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.noebrito.openbrewerydb"},{"l":"com.noebrito.openbrewerydb.exceptions"},{"l":"com.noebrito.openbrewerydb.models"}]
