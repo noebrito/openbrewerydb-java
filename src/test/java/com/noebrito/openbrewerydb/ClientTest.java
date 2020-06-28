@@ -16,7 +16,7 @@ class ClientTest implements WithAssertions {
 
 	@Test
 	void testGetBrewery() throws OpenBreweryDbClientException {
-		BreweryClient breweryClient = new BreweryClient(ENDPOINT);
+		BreweryClient breweryClient = BreweryClient.createClient(ENDPOINT);
 		Brewery brewery = breweryClient.getBrewery(1);
 
 		assertThat(brewery).isNotNull();
@@ -25,16 +25,14 @@ class ClientTest implements WithAssertions {
 
 	@Test
 	void testGetBreweryThrowsException() {
-		BreweryClient breweryClient = new BreweryClient("bad");
-		assertThatThrownBy(() -> {
-			breweryClient.getBrewery(1);
-		})
+		BreweryClient breweryClient = BreweryClient.createClient("bad");
+		assertThatThrownBy(() -> breweryClient.getBrewery(1))
 				.isInstanceOf(OpenBreweryDbClientException.class);
 	}
 
 	@Test
 	void testListBreweries() throws OpenBreweryDbClientException {
-		BreweryClient breweryClient = new BreweryClient(ENDPOINT);
+		BreweryClient breweryClient = BreweryClient.createClient(ENDPOINT);
 		ListBreweriesFilter filter = ListBreweriesFilter.builder()
 				.filterType(FilterType.BY_CITY)
 				.filterValue("los_angeles")
@@ -48,7 +46,7 @@ class ClientTest implements WithAssertions {
 
 	@Test
 	void testSearchBreweries() throws OpenBreweryDbClientException {
-		BreweryClient breweryClient = new BreweryClient(ENDPOINT);
+		BreweryClient breweryClient = BreweryClient.createClient(ENDPOINT);
 
 		List<Brewery> breweries = breweryClient.searchBreweries("dog");
 

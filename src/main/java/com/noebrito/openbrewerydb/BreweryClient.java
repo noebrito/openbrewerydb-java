@@ -27,11 +27,21 @@ public class BreweryClient {
 	private Gson gson;
 
 	/**
-	 * Constructor
+	 * Returns a new {@link BreweryClient}.
 	 *
-	 * @param url the endpoint url for the service.
+	 * @param url apiUrl for the open brewery db service.
+	 * @return a BreweryClient instance.
 	 */
-	public BreweryClient(String url) {
+	public static BreweryClient createClient(String url) {
+		return new BreweryClient(url);
+	}
+
+	/**
+	 * Private constructor.
+	 *
+	 * @param url endpoint url for the service.
+	 */
+	private BreweryClient(String url) {
 		this.url = url;
 		this.gson = new GsonBuilder()
 				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
