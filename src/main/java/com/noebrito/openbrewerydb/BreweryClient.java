@@ -60,7 +60,7 @@ public class BreweryClient {
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			validateResponse(response);
 			brewery = gson.fromJson(response.body(), Brewery.class);
-		} catch (IOException | InterruptedException e) {
+		} catch (IllegalArgumentException | IOException | InterruptedException e) {
 			throw new OpenBreweryDbClientException("Error getting brewery from the database.", e);
 		}
 
@@ -104,7 +104,7 @@ public class BreweryClient {
 			validateResponse(response);
 			Type listType = new TypeToken<List<Brewery>>(){}.getType();
 			return gson.fromJson(response.body(), listType);
-		} catch (IOException | InterruptedException e) {
+		} catch (IllegalArgumentException | IOException | InterruptedException e) {
 			throw new OpenBreweryDbClientException("Error searching breweries from the Open Brewery DB Service.", e);
 		}
 	}
