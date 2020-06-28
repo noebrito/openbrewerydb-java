@@ -9,6 +9,7 @@ import com.noebrito.openbrewerydb.models.Brewery;
 import com.noebrito.openbrewerydb.models.FilterType;
 import com.noebrito.openbrewerydb.models.ListBreweriesFilter;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -59,8 +60,8 @@ public class BreweryClient {
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			validateResponse(response);
 			brewery = gson.fromJson(response.body(), Brewery.class);
-		} catch (Exception e) {
-			throw new OpenBreweryDbClientException(e);
+		} catch (IllegalArgumentException | IOException | InterruptedException e) {
+			throw new OpenBreweryDbClientException("Error getting brewery from the database.", e);
 		}
 
 		return brewery;
@@ -103,14 +104,16 @@ public class BreweryClient {
 			validateResponse(response);
 			Type listType = new TypeToken<List<Brewery>>(){}.getType();
 			return gson.fromJson(response.body(), listType);
-		} catch (Exception e) {
-			throw new OpenBreweryDbClientException(e);
+		} catch (IllegalArgumentException | IOException | InterruptedException e) {
+			throw new OpenBreweryDbClientException("Error searching breweries from the Open Brewery DB Service.", e);
 		}
 	}
 
 	private void validateResponse(HttpResponse<String> response) throws OpenBreweryDbClientException {
 		if (response.statusCode() != 200) {
-			throw new OpenBreweryDbClientException("Received a non 200 status code.");
+			throw new OpenBreweryDbClientException(
+					String.format("Failed call to the Open Brewery DB Service. Error body: %s", response.body())
+			);
 		}
 	}
 }
