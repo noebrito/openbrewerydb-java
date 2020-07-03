@@ -6,9 +6,7 @@ import com.noebrito.openbrewerydb.models.FilterType;
 import com.noebrito.openbrewerydb.models.ListBreweriesFilter;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
 
 class ClientTest implements WithAssertions {
 

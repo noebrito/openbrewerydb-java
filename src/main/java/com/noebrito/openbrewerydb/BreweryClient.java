@@ -8,6 +8,7 @@ import com.noebrito.openbrewerydb.exceptions.OpenBreweryDbClientException;
 import com.noebrito.openbrewerydb.models.Brewery;
 import com.noebrito.openbrewerydb.models.FilterType;
 import com.noebrito.openbrewerydb.models.ListBreweriesFilter;
+import lombok.NonNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -17,14 +18,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Client wrapper for the Open Brewery DB Rest API.
  */
 public class BreweryClient {
 
-	private HttpClient httpClient;
-	private String url;
-	private Gson gson;
+	private final HttpClient httpClient;
+	private final String url;
+	private final Gson gson;
 
 	/**
 	 * Returns a new {@link BreweryClient}.
@@ -42,6 +45,7 @@ public class BreweryClient {
 	 * @param url endpoint url for the service.
 	 */
 	private BreweryClient(String url) {
+		checkNotNull(url);
 		this.url = url;
 		this.gson = new GsonBuilder()
 				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -85,6 +89,7 @@ public class BreweryClient {
 	 * @throws OpenBreweryDbClientException if the service call fails.
 	 */
 	public List<Brewery> listBreweries(ListBreweriesFilter filter) throws OpenBreweryDbClientException {
+		checkNotNull(filter);
 		FilterType filterType = filter.getFilterType();
 		String filterValue = filter.getFilterValue();
 		String listBreweriesUrl = String.format("%s/breweries?%s=%s", url, filterType.label, filterValue);
@@ -99,6 +104,7 @@ public class BreweryClient {
 	 * @throws OpenBreweryDbClientException if the service call fails.
 	 */
 	public List<Brewery> searchBreweries(String query) throws OpenBreweryDbClientException {
+		checkNotNull(query);
 		String searchBreweriesUrl = String.format("%s/breweries/search?query=%s", url, query);
 		return executeListBreweriesRequest(searchBreweriesUrl);
 	}
